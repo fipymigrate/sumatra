@@ -98,6 +98,7 @@ class RecordDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(RecordDetailView, self).get_context_data(**kwargs)
         context['project_name'] = self.kwargs["project"]  # use project full name?
+        context['project'] = Project.objects.get(pk=self.kwargs["project"])
         parameter_set = self.object.parameters.to_sumatra()
         if hasattr(parameter_set, "as_dict"):
             parameter_set = parameter_set.as_dict()
@@ -143,6 +144,7 @@ class DataDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DataDetailView, self).get_context_data(**kwargs)
         context['project_name'] = self.kwargs["project"]  # use project full name?
+        context['project'] = Project.objects.get(pk=self.kwargs["project"])
 
         if 'truncate' in self.request.GET:
             if self.request.GET['truncate'].lower() == 'false':

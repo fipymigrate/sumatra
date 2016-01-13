@@ -21,7 +21,8 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    {% if project %}
+    <nav class="navbar navbar-inverse navbar-sumatra navbar-static-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -30,12 +31,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span></a>
+          <a class="navbar-brand" href="/"><span class="glyphicon brand-logo"></span></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            {% block navbar %}
-            {% endblock %}
+                <li id="nav-record"><a href="/{{project.id}}/">Record View</a></li>
+                <li id="nav-data"><a href="/{{project.id}}/data/">Data View</a></li>
+                <li id="nav-parameter"><a href="/{{project.id}}/parameter">Parameter View</a></li>            
+                <li id="nav-about"><a href="/{{project.id}}/about/">About</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% block navbar-right %}
@@ -44,8 +47,25 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+    {% else%}
+    <p></p>
+    {% endif %}
 
     <div class="container">
+
+      {% if project %}
+      <ol class="breadcrumb">
+          <li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+          <li><a href="/{{project.id}}/">{{project.id}}</a></li>
+          {% if record %}<li><a href="/{{project.id}}/{{record.label}}/">{{record.label}}</a></li>{% endif %}
+          {% if data_key.path %}
+          <li><a href="/{{project.id}}/{{data_key.output_from_record.label}}/">{{data_key.output_from_record.label}}</a></li>
+          <li><a href="/{{project.id}}/data/datafile?path={{data_key.path|urlencode}}&digest={{data_key.digest}}&creation={{data_key.creation|date:"c"}}">{{data_key.path}}</a></li>
+          {% endif %}
+          {% block navbar %}
+          {% endblock %}
+      </ol>
+    {% endif %}
 
       {% block content %}
 

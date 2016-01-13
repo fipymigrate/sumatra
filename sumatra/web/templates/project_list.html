@@ -5,13 +5,35 @@
 {% block title %}List of projects{% endblock %}
 
 {% block content %}
-    {% for project in projects %}
-    <div class="well">
-        <a href="/{{project.id}}/"><h3>{{project.get_name}}</h3></a>
-        <span class="label label-info">{{project.record_set.count}} records</span>
-        {% if project.description %}
-        <hr>
-        {{project.description|restructuredtext}}&nbsp;
-        {% endif %}
-    {% endfor %}
+<div class="row">
+    <div class="col-xs-12 col-md-5">
+        <div class="jumbotron">
+          <h3><img alt="Sumatra" src="/static/img/sumatra_logo.png"></h3>
+          <p>Sumatra is a tool for managing and tracking projects based on numerical simulation or analysis, with the aim of supporting reproducible research. It can be thought of as an ''automated electronic lab notebook'' for simulation/analysis projects. </p>
+          <p><a class="btn btn-primary btn-lg" href="http://neuralensemble.org/sumatra/" role="button" target="_blank">Learn more</a>
+            <a class="btn btn-default btn-lg" href="https://github.com/open-research/sumatra" role="button" target="_blank">Source code</a></p>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-md-7">
+        <div class="page-header">
+            <h3>List of projects</h3>
+        </div>
+        <div class="list-group">
+            {% for project in projects %}
+            <a class="list-group-item" href="/{{project.id}}/">
+                <span class="badge">{{project.record_set.count}} records</span>
+                <h4 class="list-group-item-heading">{{project.get_name}}</h4>
+                {% if project.description %}<p class="list-group-item-text">{{project.description|truncatechars:200}}</p>{% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="text-muted">© Copyright 2006-2015 by the Sumatra team. License: BSD 2-clause, see LICENSE for details.</div>
+    </div>
+</footer>
 {% endblock %}

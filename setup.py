@@ -43,7 +43,7 @@ setup(
                 'sumatra.web', 'sumatra.web.templatetags',
                 'sumatra.publishing',
                 'sumatra.publishing.latex', 'sumatra.publishing.sphinxext'],
-    package_data = {'sumatra': ['web/static/css/*.css', 'web/static/js/*.js',
+    package_data = {'sumatra': ['web/static/css/*.css', 'web/static/js/*.js', 'web/static/img/*.png',
                                 'web/static/fonts/*', 'web/templates/*.html',
                                 'publishing/latex/sumatra.sty',
                                 'formatting/latex_template.tex', 'external_scripts/script_introspect.R']},

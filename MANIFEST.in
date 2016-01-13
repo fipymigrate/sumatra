@@ -4,6 +4,7 @@ include doc/releases/*.txt
 include LICENSE
 include README.rst
 include sumatra/web/static/css/*.css
+include sumatra/web/static/img/*.png
 include sumatra/web/static/fonts/*
 include sumatra/web/static/js/*.js
 include sumatra/web/templates/*.html

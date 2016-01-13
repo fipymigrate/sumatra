@@ -5,7 +5,7 @@
 {% block title %}{{project.id}}: About{% endblock %}
 
 {% block navbar %}
-            <li><a href="#">{{project.id}}</a></li>
+            <li>About</li>
 {% endblock %}
 
 {% block content %}
@@ -15,14 +15,6 @@
     <button type="button" class="btn btn-xs" data-toggle="modal" data-target="#editProjectNameModal">Edit</button>
     {% endif %}
 </h3>
-
-<div class="btn-group" role="group">
-    <a type="button" class="btn btn-default" href="/{{project.id}}/">Record View</a>
-    <a type="button" class="btn btn-default" href="/{{project.id}}/data/">Data View</a>
-    <a type="button" class="btn btn-default" href="/{{project.id}}/image/">Image View</a>
-    <button type="button" class="btn btn-primary">About</button>
-</div>
-
 
 {% if project.description %}
 <div class="panel panel-default" id="projectDescriptionPanel">
@@ -87,6 +79,8 @@
 {% block scripts %}
 <script type="text/javascript">
 $(document).ready(function() {
+    $('#nav-about').addClass('active');
+
     $('#saveProjectName').click(function() {
         $.ajax({
             type: 'POST',

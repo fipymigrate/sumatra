@@ -1,17 +1,27 @@
-body {
-    padding-top: 75px;
-}
-
 div.container {
     width: 100%;
 }
 
-code {
-    color: black;
+.navbar-default .brand-logo {
+background-image: url(/static/img/brand_logo.png);
 }
 
-#projectDescriptionPanel {
-    margin-top: 20px;
+.navbar-inverse .brand-logo {
+background-image: url(/static/img/brand_logo_inverse.png);
+}
+
+.brand-logo {
+background-size: 92.5px 24px;
+background-repeat: no-repeat;
+width: 92.5px;height:24px;
+}
+
+.navbar-sumatra {
+    background-color: #003300;
+}
+
+code {
+    color: black;
 }
 
 .dl-horizontal dt{
@@ -19,8 +29,8 @@ code {
     width: auto;
 }
 
-.navbar-inverse {
-    background-color: #003300;
+a .glyphicon {
+    cursor: pointer;
 }
 
 .selected {
@@ -38,4 +48,16 @@ code {
 
 ul.hierarchical {
     list-style-type: none;
+}
+
+.dropdown-menu li a {
+    cursor: pointer;
+}
+
+.footer {
+    position: absolute;
+    padding:5px;
+    left:0px;
+    bottom: 0px;
+    font-size: 10px;
 }

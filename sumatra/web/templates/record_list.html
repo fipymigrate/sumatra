@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block navbar %}
-            <li><a href="#">{{project.id}}</a></li>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-tag"></span> <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                    <span class="glyphicon glyphicon-tag"></span> <span id="tag-label">untagged</span> <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu" id="tagList">
                     {% if tags %}
                         {% for tag in tags %}
@@ -27,7 +27,7 @@
 {% endblock %}
 
 {% block navbar-right %}
-            <li><a href="#" data-toggle="modal" data-target="#settingsModal"><span class="glyphicon glyphicon-cog"></span></a></li>
+            <li><a href="#" data-toggle="modal" data-target="#settingsModal" data-toggle="tooltip" data-placement="bottom" title="Setting"><span class="glyphicon glyphicon-cog"></span></a></li>
 {% endblock %}
 
 {% block content %}
@@ -36,15 +36,7 @@
 <h3>{{project.name}}</h3>
 {% endif %}
 
-<div class="btn-group" role="group">
-    <button type="button" class="btn btn-primary">Record View</button>
-    <a type="button" class="btn btn-default" href="/{{project.id}}/data/">Data View</a>
-    <a type="button" class="btn btn-default" href="/{{project.id}}/image/">Image View</a>
-    <a type="button" class="btn btn-default" href="/{{project.id}}/about/">About</a>
-</div>
-
-<div class="pull-right" role="group" style="padding-left: 2px;">
-    {% if not read_only %}
+<div class="pull-left" role="group" style="padding: 0 2px 5px 0">
     <button type="button" class="btn btn-danger btn-sm" id="delete" data-toggle="modal" data-target="#deleteModal"><span class="glyphicon glyphicon-trash"></span> Delete selected</button>
     {% endif %}
     <button type="button" class="btn btn-warning btn-sm" id="compare"><span class="glyphicon glyphicon-transfer"></span> Compare selected</button>
@@ -198,6 +190,9 @@ $.fn.dataTable.ext.search.push(
 
 
 $(document).ready(function() {
+    $('#nav-record').addClass('active');
+    $('[data-toggle="tooltip"]').tooltip();
+
     /* retrieve settings */
     var columnDefs = null;
     $.ajax({
@@ -302,6 +297,7 @@ $(document).ready(function() {
             li.addClass('selected').siblings().removeClass('selected');
             selected_tag = target[0].textContent;
         };
+        $('#tag-label').html(selected_tag ? selected_tag : 'untagged');
         table.draw();
     });
 

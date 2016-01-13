@@ -8,23 +8,11 @@
     <link href="/static/css/dataTables.bootstrap.css" rel="stylesheet">
 {% endblock %}
 
-{% block navbar %}
-            <li><a href="#">{{project.id}}</a></li>
-{% endblock %}
-
 {% block content %}
 
 {% if project.name %}
 <h3>{{project.name}}</h3>
 {% endif %}
-
-<div class="btn-group" role="group">
-    <a type="button" class="btn btn-default" href="/{{project.id}}/">Record View</a>
-    <button type="button" class="btn btn-primary">Data View</button>
-    <a type="button" class="btn btn-default" href="/{{project.id}}/image/">Image View</a>
-    <a type="button" class="btn btn-default" href="/{{project.id}}/about/">About</a>
-</div>
-
 
 <table id="data-keys" class="table table-striped table-condensed" cellspacing="0" width="100%">
     <thead>
@@ -89,6 +77,8 @@
     <script type="text/javascript" language="javascript" src="/static/js/dataTables.bootstrap.js"></script>
     <script type="text/javascript">
 $(document).ready(function() {
+    $('#nav-data').addClass('active');
+
     var table = $('#data-keys').dataTable( {
         "info": false,
         "dom": 'ftlp',
