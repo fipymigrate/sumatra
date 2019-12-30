@@ -79,7 +79,8 @@ class Project(object):
                  on_changed='error', description='', data_label=None,
                  input_datastore=None, label_generator='timestamp',
                  timestamp_format=TIMESTAMP_FORMAT,
-                 allow_command_line_parameters=True, plugins=[]):
+                 allow_command_line_parameters=True,
+                 ignore_parameters=False, plugins=[]):
         self.path = os.getcwd()
         if not os.path.exists(".smt"):
             os.mkdir(".smt")
@@ -107,6 +108,7 @@ class Project(object):
         self.timestamp_format = timestamp_format
         self.sumatra_version = sumatra.__version__
         self.allow_command_line_parameters = allow_command_line_parameters
+        self.ignore_parameters = ignore_parameters
         self._most_recent = None
         self.plugins = []
         self.load_plugins(*plugins)
@@ -129,7 +131,8 @@ class Project(object):
                      'default_main_file', 'on_changed', 'description',
                      'data_label', '_most_recent', 'input_datastore',
                      'label_generator', 'timestamp_format', 'sumatra_version',
-                     'allow_command_line_parameters', 'plugins'):
+                     'allow_command_line_parameters', 'ignore_parameters',
+                     'plugins'):
             try:
                 attr = getattr(self, name)
             except:

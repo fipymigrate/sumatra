@@ -82,7 +82,7 @@ def parse_executable_str(exec_str):
     return exec_str[:first_space], exec_str[first_space:]
 
 def parse_arguments(args, input_datastore, stdin=None, stdout=None,
-                    allow_command_line_parameters=True):
+                    allow_command_line_parameters=True, ignore_parameters=False):
     cmdline_parameters = []
     script_args = []
     parameter_sets = []
@@ -90,7 +90,10 @@ def parse_arguments(args, input_datastore, stdin=None, stdout=None,
     for arg in args:
         have_parameters = False
         if os.path.isfile(arg):  # could be a parameter file or a data file
-            parameters = build_parameters(arg)
+            if ignore_parameters:
+                parameters = None
+            else:
+                parameters = build_parameters(arg)
             if parameters is not None:
                 parameter_sets.append(parameters)
                 script_args.append("<parameters>")
@@ -104,7 +107,7 @@ def parse_arguments(args, input_datastore, stdin=None, stdout=None,
                 data_key = input_datastore.generate_keys(path)
                 input_data.extend(data_key)
                 script_args.append(arg)
-            elif allow_command_line_parameters and "=" in arg:  # cmdline parameter
+            elif allow_command_line_parameters and not ignore_parameters and "=" in arg:  # cmdline parameter
                 cmdline_parameters.append(arg)
             else:  # a flag or something, passed on unchanged
                 script_args.append(arg)
@@ -128,7 +131,7 @@ def parse_arguments(args, input_datastore, stdin=None, stdout=None,
                     message, name, value = v.args
                     warnings.warn(message)
                     warnings.warn("'{0}={1}' not defined in the parameter file".format(name, value))
-                    ps.update({name: value}) ## for now, add the command line param anyway
+                    ps.update({name: value})  # add the command line param anyway
         else:
             raise Exception("Command-line parameters supplied but without a parameter file to put them into.")
             # ought really to have a more specific Exception and to catch it so as to give a helpful error message to user
@@ -252,6 +255,8 @@ def configure(argv):
     parser.add_argument('-o', '--launch_mode_options', help="extra options for the given launch mode, to be given in quotes with a leading space, e.g. ' --foo=3'")
     parser.add_argument('-p', '--plain', dest='plain', action='store_true', help="pass arguments to the 'run' command straight through to the program. Otherwise arguments of the form name=value can be used to overwrite default parameter values.")
     parser.add_argument('--no-plain', dest='plain', action='store_false', help="arguments to the 'run' command of the form name=value will overwrite default parameter values. This is the opposite of the --plain option.")
+    parser.add_argument('--ignore-parameters', dest='ignore_parameters', action='store_true', help="do not attempt to parse any parameter files.")
+    parser.add_argument('--parse-parameters', dest='ignore_parameters', action='store_false', help="parse parameter files if found. This is the default.")
     parser.add_argument('-s', '--store', help="Change the record store to the specified path, URL or URI (must be specified). {0}".format(store_arg_help))
 
     datastore = parser.add_mutually_exclusive_group()
@@ -322,6 +327,9 @@ def configure(argv):
         project.default_launch_mode.options = args.launch_mode_options.strip()
     if args.plain is not None:
         project.allow_command_line_parameters = not args.plain
+    if args.ignore_parameters is not None:
+        project.ignore_parameters = args.ignore_parameters
+        print("Setting ignore parameters to {}".format(args.ignore_parameters))
     if args.add_plugin:
         project.load_plugins(args.add_plugin)
     if args.remove_plugin:
@@ -386,7 +394,8 @@ def run(argv):
                                                           project.input_datastore,
                                                           args.stdin,
                                                           args.stdout,
-                                                          project.allow_command_line_parameters)
+                                                          project.allow_command_line_parameters,
+                                                          project.ignore_parameters)
     if len(parameters) == 0:
         parameters = {}
     elif len(parameters) == 1:

@@ -115,6 +115,7 @@ class MockProject(object):
     on_changed = "sound the alarm"
     data_label = "pluck from the ether"
     allow_command_line_parameters = True
+    ignore_parameters = False
     record_store = MockRecordStore("default")
     saved = False
     info_called = False

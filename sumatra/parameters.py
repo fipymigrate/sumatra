@@ -70,7 +70,7 @@ class ParameterSet(with_metaclass(abc.ABCMeta, object)):
 
     def _new_param_check(self, name, value):
         try:
-            self.values[name]
+            self._values[name]
         except KeyError:
             raise ValueError("")
 
@@ -107,6 +107,9 @@ class ParameterSet(with_metaclass(abc.ABCMeta, object)):
 
     def diff(self, other):
         return _dict_diff(self, other)
+
+    def items(self):
+        return self._values
 
 
 def _dict_diff(a, b):
@@ -149,16 +152,16 @@ class YAMLParameterSet(ParameterSet):
             try:
                 if os.path.exists(initialiser):
                     with open(initialiser) as fid:
-                        self.values = yaml.load(fid)
+                        self._values = yaml.load(fid)
                     self.source_file = initialiser
                 else:
                     if initialiser:
-                        self.values = yaml.load(initialiser)
+                        self._values = yaml.load(initialiser)
                     else:
-                        self.values = {}
+                        self._values = {}
             except yaml.YAMLError:
                 raise SyntaxError("Misformatted YAML file")
-            if not isinstance(self.values, dict):
+            if not isinstance(self._values, dict):
                 raise SyntaxError("YAML file cannot be represented as a dict")
         else:
             raise ImportError("Cannot import PyYAML module")
@@ -167,7 +170,7 @@ class YAMLParameterSet(ParameterSet):
         return self.pretty()
 
     def __getitem__(self, name):
-        return self.values[name]
+        return self._values[name]
 
     def __eq__(self, other):
         return self.as_dict() == other.as_dict()
@@ -176,7 +179,7 @@ class YAMLParameterSet(ParameterSet):
         return not self.__eq__(other)
 
     def keys(self):
-        return self.values.keys()
+        return self._values.keys()
 
     def pretty(self, expand_urls=False):
         """
@@ -187,26 +190,26 @@ class YAMLParameterSet(ParameterSet):
                     not used.
         """
 
-        output = yaml.dump(self.values, indent=4)
+        output = yaml.dump(self._values, indent=4)
         return output
 
     def as_dict(self):
-        return self.values
+        return self._values
 
     def save(self, filename, add_extension=False):
         if add_extension:
             filename += ".yaml"
         with open(filename, "w") as f:
-            yaml.dump(self.values, f)
+            yaml.dump(self._values, f)
         return filename
 
     def update(self, E, **F):
-        self.values.update(E, **F)
+        self._values.update(E, **F)
     update.__doc__ = dict.update.__doc__
 
     def pop(self, key, d=None):
-        if key in self.values:
-            return self.values.pop(key)
+        if key in self._values:
+            return self._values.pop(key)
         else:
             return d
 
@@ -219,8 +222,12 @@ class NTParameterSet(parameters.ParameterSet, ParameterSet):
     def save(self, filename, add_extension=False):
         if add_extension:
             filename += ".params"
-        super().save(filename)
+        super(NTParameterSet, self).save(filename)
         return filename
+
+    def _new_param_check(self, name, value):
+        if name not in self:
+            raise ValueError("")
 
 
 @component
@@ -238,7 +245,7 @@ class SimpleParameterSet(ParameterSet):
         Create a new parameter set from a file or string. In both cases,
         parameters should be separated by newlines.
         """
-        self.values = {}
+        self._values = {}
         self.types = {}
         self.comments = {}
         if isinstance(initialiser, dict):
@@ -308,7 +315,7 @@ class SimpleParameterSet(ParameterSet):
         if value is not None and not isinstance(value, (int, float, str, bool, list, tuple)):
             raise TypeError("Value must be one of the basic types (a numeric value, bool, "
                 "string, list, tuple or None. Got: '{}' ({})".format(value, type(value)))
-        self.values[name] = value
+        self._values[name] = value
         self.types[name] = type(value)
         if comment is not None:
             self.comments[name] = comment
@@ -317,20 +324,20 @@ class SimpleParameterSet(ParameterSet):
         return self.pretty()
 
     def __getitem__(self, name):
-        return self.values[name]
+        return self._values[name]
 
     def __eq__(self, other):
-        return ((self.values == other.values) and (self.types == other.types))
+        return ((self._values == other._values) and (self.types == other.types))
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def keys(self):
-        return self.values.keys()
+        return self._values.keys()
 
     def pop(self, k, d=POP_NONE):
-        if k in self.values:
-            v = self.values.pop(k)
+        if k in self._values:
+            v = self._values.pop(k)
             self.types.pop(k)
             self.comments.pop(k, None)
             return v
@@ -348,7 +355,7 @@ class SimpleParameterSet(ParameterSet):
                     not used.
         """
         output = []
-        for name, value in self.values.items():
+        for name, value in self._values.items():
             if isinstance(value, str):
                 output.append('%s = "%s"' % (name, value))
             else:
@@ -358,7 +365,7 @@ class SimpleParameterSet(ParameterSet):
         return "\n".join(output)
 
     def as_dict(self):
-        return self.values.copy()
+        return self._values.copy()
 
     def save(self, filename, add_extension=False):
         if add_extension:
@@ -521,13 +528,13 @@ class JSONParameterSet(ParameterSet):
         try:
             if os.path.exists(initialiser):
                 with open(initialiser) as fid:
-                    self.values = json.load(fid)
+                    self._values = json.load(fid)
                 self.source_file = initialiser
             else:
                 if initialiser:
-                    self.values = json.loads(initialiser)
+                    self._values = json.loads(initialiser)
                 else:
-                    self.values = {}
+                    self._values = {}
         except ValueError:
             raise SyntaxError("Misformatted JSON file")
 
@@ -535,7 +542,7 @@ class JSONParameterSet(ParameterSet):
         return self.pretty()
 
     def __getitem__(self, name):
-        return self.values[name]
+        return self._values[name]
 
     def __eq__(self, other):
         return self.as_dict() == other.as_dict()
@@ -544,7 +551,7 @@ class JSONParameterSet(ParameterSet):
         return not self.__eq__(other)
 
     def keys(self):
-        return self.values.keys()
+        return self._values.keys()
 
     def pretty(self, expand_urls=False):
         """
@@ -555,26 +562,26 @@ class JSONParameterSet(ParameterSet):
                     not used.
         """
 
-        output = json.dumps(self.values, sort_keys=True, indent=4)
+        output = json.dumps(self._values, sort_keys=True, indent=4)
         return output
 
     def as_dict(self):
-        return self.values
+        return self._values
 
     def save(self, filename, add_extension=False):
         if add_extension:
             filename += ".json"
         with open(filename, "w") as f:
-            json.dump(self.values, f)
+            json.dump(self._values, f)
         return filename
 
     def update(self, E, **F):
-        self.values.update(E, **F)
+        self._values.update(E, **F)
     update.__doc__ = dict.update.__doc__
 
     def pop(self, key, d=None):
-        if key in self.values:
-            return self.values.pop(key)
+        if key in self._values:
+            return self._values.pop(key)
         else:
             return d
 

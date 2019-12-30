@@ -89,7 +89,7 @@ class TestSimpleParameterSet(unittest.TestCase):
 
     def test__init__should_accept_an_empty_initializer(self):
         P = SimpleParameterSet("")
-        self.assertEqual(P.values, {})
+        self.assertEqual(P._values, {})
 
     def test__init__should_accept_dict(self):
         P = SimpleParameterSet({'x': 2, 'y': 3})
@@ -102,7 +102,7 @@ class TestSimpleParameterSet(unittest.TestCase):
         with open("test_file", "w") as f:
             f.write(init)
         P2 = SimpleParameterSet("test_file")
-        self.assertEqual(P1.values, P2.values)
+        self.assertEqual(P1.items(), P2.items())
         os.remove("test_file")
 
     def test__init__should_raise_a_TypeError_if_initializer_is_not_a_filename_or_string(self):
@@ -170,7 +170,7 @@ class TestSimpleParameterSet(unittest.TestCase):
         init = "x = 2\ny = 3\nz = 'hello'"
         P1 = SimpleParameterSet(init)
         P2 = SimpleParameterSet(P1.pretty())
-        self.assertEqual(P1.values, P2.values)
+        self.assertEqual(P1.items(), P2.items())
 
     def test__save__should_backup_an_existing_file_before_overwriting_it(self):
         # not really sure what the desired behaviour is here
