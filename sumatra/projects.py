@@ -150,6 +150,8 @@ class Project(object):
             if hasattr(attr, "__getstate__"):
                 state[name] = {'type': attr.__class__.__module__ + "." + attr.__class__.__name__}
                 for key, value in attr.__getstate__().items():
+                    if key in ['url','root','working_directory','db_file']:
+                        value = os.path.relpath(value)
                     state[name][key] = value
             else:
                 state[name] = attr

@@ -211,7 +211,7 @@ class TestRecordDifference(unittest.TestCase):
         r1.dependencies = [MockDependency("foo"), MockDependency("bar")]
         r2.dependencies = [MockDependency("bar"), MockDependency("eric")]
         diff = RecordDifference(r1, r2)
-        self.assertEqual(repr(diff), "RecordDifference(A, B):XCP")
+        self.assertEqual(repr(diff), "RecordDifference(A, B):XCPL")
 
 
 if __name__ == '__main__':

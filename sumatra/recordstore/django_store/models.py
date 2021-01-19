@@ -10,6 +10,7 @@ from builtins import str
 from builtins import object
 
 import json
+import os
 from django.db import models
 from sumatra import programs, launch, datastore, records, versioncontrol, parameters, dependency_finder
 from sumatra.datastore import get_data_store
@@ -36,6 +37,12 @@ class SumatraObjectsManager(models.Manager):
         field_names = set([f.name for f in self.model._meta.get_fields()]).difference(excluded_fields)
         attributes = {}
         for name in field_names:
+            if 'url' in obj.__dict__.keys():
+                obj.url = os.path.relpath(obj.url)
+            if '_root' in obj.__dict__.keys():
+                obj.root = os.path.relpath(obj.root)
+            if 'working_directory' in obj.__dict__.keys():
+                obj.working_directory = os.path.abspath(obj.working_directory)
             if name == 'metadata':
                 assert isinstance(obj.metadata, dict)
                 attributes[name] = json.dumps(obj.metadata, sort_keys=True)  # DataKey

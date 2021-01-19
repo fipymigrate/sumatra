@@ -29,7 +29,7 @@
 
 <!-- Code -->
 
-{% if diff.script_arguments_differ or diff.code_differs %}
+{% if diff.script_arguments_differ or diff.code_differs or diff.launch_mode_differs %}
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
@@ -117,6 +117,18 @@
             </div>
             <div class="col-md-6">
                 <pre>{{diff.recordB.diff}}</pre>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if diff.launch_mode_differs %}
+        <h5>Working directory</h5>
+        <div class="row">
+            <div class="col-md-6">
+                {{diff.recordA.launch_mode.working_directory}}
+            </div>
+            <div class="col-md-6">
+                {{diff.recordB.launch_mode.working_directory}}
             </div>
         </div>
         {% endif %}

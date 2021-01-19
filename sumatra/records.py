@@ -105,6 +105,8 @@ class Record(object):
         # Check the main file is in the working copy
         if self.main_file:
             check_file_under_version_control(self.main_file, working_copy)
+        # Get currect directory for launch mode
+        self.launch_mode.working_directory = os.path.abspath(os.getcwd())
         # Record dependencies
         logger.debug("Recording dependencies")
         self.dependencies = []
@@ -335,6 +337,8 @@ class RecordDifference(object):
             s += 'I'
         if self.script_arguments_differ:
             s += 'S'
+        if self.launch_mode_differs:
+            s += 'L'
         return s
 
     @property

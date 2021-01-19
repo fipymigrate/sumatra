@@ -144,7 +144,7 @@ class DjangoRecordStore(RecordStore):
 
     def __init__(self, db_file='.smt/records'):
         self._db_label = db_config.add_database(db_file)
-        self._db_file = db_file
+        self._db_file = os.path.abspath(db_file)
 
     def __str__(self):
         return "Django (%s)" % self._db_file

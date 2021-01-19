@@ -64,7 +64,7 @@ class LaunchMode(object):
     required_attributes = ("check_files", "generate_command")
 
     def __init__(self, working_directory=None, options=None):
-        self.working_directory = working_directory or os.getcwd()
+        self.working_directory = os.path.abspath(working_directory or os.getcwd())
         self.options = options
 
     def __getstate__(self):
