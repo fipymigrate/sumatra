@@ -1,0 +1,20 @@
+FROM debian:jessie
+
+RUN apt-get update
+RUN apt-get -y -q install python-software-properties software-properties-common python-pip 
+ENV MYSQL_PWD Pwd123
+RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
+RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
+RUN apt-get -y install mysql-server
+
+ENV WORK=/mysqlwork
+WORKDIR ${WORK}
+
+RUN service mysql start &&\
+	mysql -u root --password=${MYSQL_PWD} -e "CREATE USER docker IDENTIFIED BY 'docker';" &&\
+	mysql -u root --password=${MYSQL_PWD} -e "CREATE DATABASE sumatra_test;" && \
+	mysql -u root --password=${MYSQL_PWD} -e "GRANT ALL PRIVILEGES ON sumatra_test.* TO docker IDENTIFIED BY 'docker';"
+
+EXPOSE 5432
+VOLUME ["/var/lib/mysql"]
+CMD ["mysqld"]
