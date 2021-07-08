@@ -3,6 +3,8 @@
 Command-line interface to the Sumatra computational experiment management tool.
 """
 
+from __future__ import unicode_literals
+from builtins import str
 import sys
 from sumatra import commands, __version__
 from sumatra.versioncontrol.base import VersionControlError
@@ -15,6 +17,12 @@ Simulation/analysis management tool version %s
 Available subcommands:
   """ % __version__
 usage += "\n  ".join(commands.modes)
+
+# Workaround for Py2/Py3 compatibility: convert arguments to type 'str',
+# otherwise a comparison such as "isinstance(x, str)" may fail further
+# down the line. This is due to a bug in python-future; see:
+# https://github.com/PythonCharmers/python-future/issues/170
+sys.argv = [str(x) for x in sys.argv]
 
 if len(sys.argv) < 2:
     print(usage)
